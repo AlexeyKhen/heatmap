@@ -1,7 +1,7 @@
 import {data} from "./data.ts";
 import {useCallback, useEffect, useState, useTransition} from "react";
 
-const X_OFFSET = 50
+const X_OFFSET = 100
 const Y_OFFSET = 50
 
 const series = data
@@ -57,6 +57,7 @@ function App() {
         Math.max(Math.floor((dimensions.height - Y_OFFSET) / yLength), 0))
 
     const yLabels = series.map((item) => item.yLabel)
+    const xLabels = series[0].points.map((point)=>point.xLabel)
 
     return (
 
@@ -69,6 +70,18 @@ function App() {
                                                                   textAnchor="middle"
                                                                   alignmentBaseline="middle"
                                                                   fill="black">{label}</text>)}
+                    </g>
+                    <g transform={`translate(${X_OFFSET}, ${yLength * cellHeight})`}>
+                        {xLabels.map((label, labelIndex) =>{
+                            const x = labelIndex * cellWidth + cellWidth / 2
+                            const y = cellHeight / 2
+                            return  <text x={`${x}px`}
+                                          y={`${y}px`}
+                                          transform={`rotate(-90, ${x}, ${y})`}
+                                          textAnchor="middle"
+                                          alignmentBaseline="middle"
+                                          fill="black">{label}</text>
+                        })}
                     </g>
                     {series.map((item, index) => {
                         return <g transform={`translate(${X_OFFSET}, ${index * cellHeight})`}>
