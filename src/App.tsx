@@ -57,7 +57,7 @@ function App() {
         Math.max(Math.floor((dimensions.height - Y_OFFSET) / yLength), 0))
 
     const yLabels = series.map((item) => item.yLabel)
-    const xLabels = series[0].points.map((point)=>point.xLabel)
+    const xLabels = series[0].points.map((point) => point.xLabel)
 
     return (
 
@@ -65,22 +65,22 @@ function App() {
             <div style={{width: "100%", height: "100%"}} ref={registerNode}>
                 <svg width={"100%"} height="100%">
                     <g>
-                        {yLabels.map((label, labelIndex) => <text x={`${X_OFFSET / 2}px`}
+                        {yLabels.map((label, labelIndex) => <text x={`${X_OFFSET / 2 + cellWidth}px`}
                                                                   y={`${cellHeight * labelIndex + cellHeight / 2}px`}
-                                                                  textAnchor="middle"
+                                                                  textAnchor="end"
                                                                   alignmentBaseline="middle"
                                                                   fill="black">{label}</text>)}
                     </g>
                     <g transform={`translate(${X_OFFSET}, ${yLength * cellHeight})`}>
-                        {xLabels.map((label, labelIndex) =>{
+                        {xLabels.map((label, labelIndex) => {
                             const x = labelIndex * cellWidth + cellWidth / 2
-                            const y = cellHeight / 2
-                            return  <text x={`${x}px`}
-                                          y={`${y}px`}
-                                          transform={`rotate(-90, ${x}, ${y})`}
-                                          textAnchor="middle"
-                                          alignmentBaseline="middle"
-                                          fill="black">{label}</text>
+                            const y = cellHeight
+                            return <text x={`${x}px`}
+                                         y={`${y}px`}
+                                         transform={`rotate(-90, ${x}, ${y})`}
+                                         textAnchor="middle"
+                                         alignmentBaseline="middle"
+                                         fill="black">{label}</text>
                         })}
                     </g>
                     {series.map((item, index) => {
