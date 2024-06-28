@@ -30,6 +30,12 @@ class HeatMapService {
     private listener?: (state: HeatMapServiceState) => void
 
     calcLayout = () => {
+        // console.log('calc',[this.xLabelHeight,
+        //     this.yLabelWidth,
+        //     this.parentDimensions.height,
+        //     this.parentDimensions.width,
+        //     this.dataDimensions.y,
+        //     this.dataDimensions.x])
         if ([this.xLabelHeight,
             this.yLabelWidth,
             this.parentDimensions.height,
@@ -85,22 +91,25 @@ class HeatMapService {
         this.calcLayout()
     }
 
-    registerParent = (parent: SVGSVGElement | null) => {
+    registerParent = (parent: HTMLDivElement | null) => {
         if (!parent) return
-        const rect = parent.getBBox()
-        this.parentDimensions.height = rect.height
-        this.parentDimensions.width = rect.width
+
+        this.parentDimensions.height = parent.offsetHeight
+        this.parentDimensions.width = parent.offsetWidth
         this.calcLayout()
     }
 
     setDataDimensions = (x: number, y: number) => {
         this.dataDimensions = {x, y}
+        this.calcLayout()
     }
 
 }
 
+type Series = { yLabel: string, points: { value: number, xLabel: string }[] }[]
+
 interface HeatMapProps {
-    series: { yLabel: string, points: { value: number, xLabel: string } }[]
+    series: Series
 }
 
 export const HeatMap = ({series}: HeatMapProps) => {
@@ -113,6 +122,7 @@ export const HeatMap = ({series}: HeatMapProps) => {
     }, [heatMapService]);
 
     const yLabels = series.map((item) => item.yLabel)
+    const xLabels = series[0].points.map((point) => point.xLabel)
     const xLength = data[0].points.length
     const yLength = data.length
 
@@ -120,9 +130,40 @@ export const HeatMap = ({series}: HeatMapProps) => {
         heatMapService.setDataDimensions(xLength, yLength)
     }, [xLength, yLength]);
 
-    return <svg width={"100%"} height="100%">
-        <YLabels labels={yLabels} registerGroup={heatMapService.registerYLabelGroup} heatMapState={heatMapState}/>
-    </svg>
+
+    return <div style={{height: "100%", width: "100%"}} ref={heatMapService.registerParent}>
+        <svg width={"100%"} height="100%">
+            <YLabels labels={yLabels} registerGroup={heatMapService.registerYLabelGroup} heatMapState={heatMapState}/>
+            <XLabels labels={xLabels} registerGroup={heatMapService.registerXLabelGroup} heatMapState={heatMapState}
+                     yLength={yLength}/>
+            <Series series={series} heatMapState={heatMapState}/>
+        </svg>
+    </div>
+}
+
+const Series = ({series, heatMapState}: { series: Series, heatMapState: HeatMapServiceState }) => {
+    const {yLabelWidth, cellWidth, cellHeight} = heatMapState
+
+    {
+        series.map((item, index) => {
+            return <g transform={`translate(${yLabelWidth}, ${index * cellHeight})`}>
+                {item.points.map((point, pointIndex) => {
+                    const width = `${cellWidth}px`
+                    const height = `${cellHeight}px`
+                    return <>
+                        <rect width={width} height={height} x={pointIndex * cellWidth} y={0} fill="black"
+                              stroke="white"
+                              strokeWidth="1px"/>
+                        <text x={`${pointIndex * cellWidth + cellWidth / 2}px`} y={`${cellHeight / 2}px`}
+                              textAnchor="middle"
+                              alignmentBaseline="middle"
+                              fill="white">{point.value}</text>
+                    </>
+                })}
+            </g>
+        })
+    }
+
 }
 
 
@@ -141,5 +182,29 @@ const YLabels = ({labels, registerGroup, heatMapState}: {
             textAnchor="end"
             alignmentBaseline="middle"
             fill="black">{label}</text>)}
+    </g>
+}
+
+const XLabels = ({labels, registerGroup, heatMapState, yLength}: {
+    labels: string[],
+    registerGroup: (node: SVGGElement | null) => void
+    heatMapState: HeatMapServiceState
+    yLength: number
+}) => {
+    const {yLabelWidth, cellWidth, cellHeight} = heatMapState
+
+    return <g transform={`translate(${yLabelWidth}, ${yLength * cellHeight})`} ref={registerGroup}>
+        {labels.map((label, index) => {
+            const x = index * cellWidth + cellWidth / 2
+            const y = cellHeight
+            return <text
+                key={index}
+                x={`${x}px`}
+                y={`${y}px`}
+                transform={`rotate(-90, ${x}, ${y})`}
+                textAnchor="middle"
+                alignmentBaseline="middle"
+                fill="black">{label}</text>
+        })}
     </g>
 }

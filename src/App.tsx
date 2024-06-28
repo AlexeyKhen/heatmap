@@ -74,35 +74,47 @@ const useResizeObserver = () => {
 //                                                                   alignmentBaseline="middle"
 //                                                                   fill="black">{label}</text>)}
 //                     </g>
-//                     {/*<g transform={`translate(${X_OFFSET}, ${yLength * cellHeight})`}>*/}
-//                     {/*    {xLabels.map((label, labelIndex) => {*/}
-//                     {/*        const x = labelIndex * cellWidth + cellWidth / 2*/}
-//                     {/*        const y = cellHeight*/}
-//                     {/*        return <text x={`${x}px`}*/}
-//                     {/*                     y={`${y}px`}*/}
-//                     {/*                     transform={`rotate(-90, ${x}, ${y})`}*/}
-//                     {/*                     textAnchor="middle"*/}
-//                     {/*                     alignmentBaseline="middle"*/}
-//                     {/*                     fill="black">{label}</text>*/}
-//                     {/*    })}*/}
-//                     {/*</g>*/}
-//                     {/*{series.map((item, index) => {*/}
-//                     {/*    return <g transform={`translate(${X_OFFSET}, ${index * cellHeight})`}>*/}
-//                     {/*        {item.points.map((point, pointIndex) => {*/}
-//                     {/*            const width = `${cellWidth}px`*/}
-//                     {/*            const height = `${cellHeight}px`*/}
-//                     {/*            return <>*/}
-//                     {/*                <rect width={width} height={height} x={pointIndex * cellWidth} y={0} fill="black"*/}
-//                     {/*                      stroke="white"*/}
-//                     {/*                      strokeWidth="1px"/>*/}
-//                     {/*                <text x={`${pointIndex * cellWidth + cellWidth / 2}px`} y={`${cellHeight / 2}px`}*/}
-//                     {/*                      textAnchor="middle"*/}
-//                     {/*                      alignmentBaseline="middle"*/}
-//                     {/*                      fill="white">{point.value}</text>*/}
-//                     {/*            </>*/}
-//                     {/*        })}*/}
-//                     {/*    </g>*/}
-//                     {/*})}*/}
+{/*<g transform={`translate(${X_OFFSET}, ${yLength * cellHeight})`}>*/
+}
+{/*    {xLabels.map((label, labelIndex) => {*/
+}
+{/*        const x = labelIndex * cellWidth + cellWidth / 2*/
+}
+{/*        const y = cellHeight*/
+}
+{/*        return <text x={`${x}px`}*/
+}
+{/*                     y={`${y}px`}*/
+}
+{/*                     transform={`rotate(-90, ${x}, ${y})`}*/
+}
+{/*                     textAnchor="middle"*/
+}
+{/*                     alignmentBaseline="middle"*/
+}
+{/*                     fill="black">{label}</text>*/
+}
+{/*    })}*/
+}
+{/*</g>*/
+}
+                    {/*{series.map((item, index) => {*/}
+                    {/*    return <g transform={`translate(${X_OFFSET}, ${index * cellHeight})`}>*/}
+                    {/*        {item.points.map((point, pointIndex) => {*/}
+                    {/*            const width = `${cellWidth}px`*/}
+                    {/*            const height = `${cellHeight}px`*/}
+                    {/*            return <>*/}
+                    {/*                <rect width={width} height={height} x={pointIndex * cellWidth} y={0} fill="black"*/}
+                    {/*                      stroke="white"*/}
+                    {/*                      strokeWidth="1px"/>*/}
+                    {/*                <text x={`${pointIndex * cellWidth + cellWidth / 2}px`} y={`${cellHeight / 2}px`}*/}
+                    {/*                      textAnchor="middle"*/}
+                    {/*                      alignmentBaseline="middle"*/}
+                    {/*                      fill="white">{point.value}</text>*/}
+                    {/*            </>*/}
+                    {/*        })}*/}
+                    {/*    </g>*/}
+                    {/*})}*/}
 //                 </svg>
 //
 //             </div>
@@ -113,18 +125,9 @@ const useResizeObserver = () => {
 
 function App() {
 
-    return <HeatMap series={series}/>
+    return <div style={{width: "50vw", height: "50vh"}}><HeatMap series={series}/></div>
 }
 
 export default App
 
 
-const equalizeDimensions = (width, height) => {
-    if (width > height) {
-        width = height
-    } else {
-        height = width
-    }
-
-    return {width, height}
-}
