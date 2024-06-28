@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {data} from "./data.ts";
 
 type HeatMapServiceState = {
     yLabelWidth: number
@@ -26,19 +27,28 @@ class HeatMapService {
     private parentDimensions = {width: 0, height: 0}
     private dataDimensions = {x: 0, y: 0}
 
-    private parent: SVGSVGElement | null = null
-    private yLabelGroup: SVGGElement | null = null
-    private xLabelGroup: SVGGElement | null = null
-
     private listener?: (state: HeatMapServiceState) => void
 
     calcLayout = () => {
+        if ([this.xLabelHeight,
+            this.yLabelWidth,
+            this.parentDimensions.height,
+            this.parentDimensions.width,
+            this.dataDimensions.y,
+            this.dataDimensions.x].includes(0)) {
+            return
+        }
+
         const {
             width,
             height
         } = equalizeDimensions(
             Math.max(Math.floor((this.parentDimensions.width - this.yLabelWidth) / this.dataDimensions.x), 0),
             Math.max(Math.floor((this.parentDimensions.height - this.xLabelHeight) / this.dataDimensions.y), 0))
+
+        this.cellHeight = height
+        this.cellWidth = width
+        this.emit()
     }
 
 
@@ -83,6 +93,9 @@ class HeatMapService {
         this.calcLayout()
     }
 
+    setDataDimensions = (x: number, y: number) => {
+        this.dataDimensions = {x, y}
+    }
 
 }
 
@@ -100,6 +113,12 @@ export const HeatMap = ({series}: HeatMapProps) => {
     }, [heatMapService]);
 
     const yLabels = series.map((item) => item.yLabel)
+    const xLength = data[0].points.length
+    const yLength = data.length
+
+    useEffect(() => {
+        heatMapService.setDataDimensions(xLength, yLength)
+    }, [xLength, yLength]);
 
     return <svg width={"100%"} height="100%">
         <YLabels labels={yLabels} registerGroup={heatMapService.registerYLabelGroup} heatMapState={heatMapState}/>
