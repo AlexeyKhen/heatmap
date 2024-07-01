@@ -142,12 +142,13 @@ const Series = ({series, heatMapState}: { series: Series, heatMapState: HeatMapS
     return <>
         {
             series.map((item, columnIndex) => {
-                return <g transform={`translate(${yLabelWidth + cellWidth/2}, ${columnIndex * cellHeight})`} key={columnIndex}>
+                return <g transform={`translate(${yLabelWidth + cellWidth / 2}, ${columnIndex * cellHeight})`}
+                          key={columnIndex}>
                     {item.points.map((point, rowIndex) => {
                         const width = `${cellWidth}px`
                         const height = `${cellHeight}px`
                         return <Fragment key={`${columnIndex}-${rowIndex}`}>
-                            <rect width={width} height={height}  x={rowIndex * cellWidth} y={0} fill="black"
+                            <rect width={width} height={height} x={rowIndex * cellWidth} y={0} fill="black"
                                   stroke="white"
                                   strokeWidth="1px"/>
                             <text x={`${rowIndex * cellWidth + cellWidth / 2}px`} y={`${cellHeight / 2}px`}
@@ -169,7 +170,7 @@ const YLabels = ({labels, registerGroup, heatMapState}: {
     registerGroup: (node: SVGGElement | null) => void
     heatMapState: HeatMapServiceState
 }) => {
-    const {yLabelWidth, cellWidth, cellHeight} = heatMapState
+    const {yLabelWidth, cellHeight} = heatMapState
 
     return <g ref={registerGroup} x={0}>
         {labels.map((label, index) => <text
@@ -188,17 +189,15 @@ const XLabels = ({labels, registerGroup, heatMapState, yLength}: {
     heatMapState: HeatMapServiceState
     yLength: number
 }) => {
-    const {yLabelWidth, cellWidth, cellHeight} = heatMapState
+    const {yLabelWidth, cellWidth, cellHeight,xLabelHeight} = heatMapState
 
-    return <g transform={`translate(${yLabelWidth}, ${yLength * cellHeight})`} ref={registerGroup}>
+    return <g transform={`translate(${yLabelWidth + cellWidth / 2}, ${yLength * cellHeight})`} ref={registerGroup}>
         {labels.map((label, index) => {
             const x = index * cellWidth + cellWidth / 2
-            const y = cellHeight
             return <text
                 key={index}
-                x={`${x}px`}
-                y={`${y}px`}
-                transform={`rotate(-90, ${x}, ${y})`}
+                x={x}
+                y={xLabelHeight}
                 textAnchor="middle"
                 alignmentBaseline="middle"
                 fill="black">{label}</text>
