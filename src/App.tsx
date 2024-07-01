@@ -125,7 +125,7 @@ const useResizeObserver = () => {
 
 function App() {
 
-    return <div style={{width: "50vw", height: "50vh"}}><HeatMap series={series}/></div>
+    return <div style={{width: "100vw", height: "50vh"}}><HeatMap series={series}/></div>
 }
 
 export default App

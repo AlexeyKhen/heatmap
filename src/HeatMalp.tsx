@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {Fragment, useEffect, useState} from "react";
 import {data} from "./data.ts";
 
 type HeatMapServiceState = {
@@ -11,7 +11,7 @@ type HeatMapServiceState = {
 
 const equalizeDimensions = (width, height) => {
     if (width > height) {
-        width = height
+        // width = height
     } else {
         height = width
     }
@@ -30,12 +30,6 @@ class HeatMapService {
     private listener?: (state: HeatMapServiceState) => void
 
     calcLayout = () => {
-        // console.log('calc',[this.xLabelHeight,
-        //     this.yLabelWidth,
-        //     this.parentDimensions.height,
-        //     this.parentDimensions.width,
-        //     this.dataDimensions.y,
-        //     this.dataDimensions.x])
         if ([this.xLabelHeight,
             this.yLabelWidth,
             this.parentDimensions.height,
@@ -54,6 +48,7 @@ class HeatMapService {
 
         this.cellHeight = height
         this.cellWidth = width
+        console.log(width,height,this.parentDimensions,this.yLabelWidth)
         this.emit()
     }
 
@@ -144,25 +139,27 @@ export const HeatMap = ({series}: HeatMapProps) => {
 const Series = ({series, heatMapState}: { series: Series, heatMapState: HeatMapServiceState }) => {
     const {yLabelWidth, cellWidth, cellHeight} = heatMapState
 
-    {
-        series.map((item, index) => {
-            return <g transform={`translate(${yLabelWidth}, ${index * cellHeight})`}>
-                {item.points.map((point, pointIndex) => {
-                    const width = `${cellWidth}px`
-                    const height = `${cellHeight}px`
-                    return <>
-                        <rect width={width} height={height} x={pointIndex * cellWidth} y={0} fill="black"
-                              stroke="white"
-                              strokeWidth="1px"/>
-                        <text x={`${pointIndex * cellWidth + cellWidth / 2}px`} y={`${cellHeight / 2}px`}
-                              textAnchor="middle"
-                              alignmentBaseline="middle"
-                              fill="white">{point.value}</text>
-                    </>
-                })}
-            </g>
-        })
-    }
+    return <>
+        {
+            series.map((item, columnIndex) => {
+                return <g transform={`translate(${yLabelWidth}, ${columnIndex * cellHeight})`} key={columnIndex}>
+                    {item.points.map((point, rowIndex) => {
+                        const width = `${cellWidth}px`
+                        const height = `${cellHeight}px`
+                        return <Fragment key={`${columnIndex}-${rowIndex}`}>
+                            <rect width={width} height={height} x={rowIndex * cellWidth} y={0} fill="black"
+                                  stroke="white"
+                                  strokeWidth="1px"/>
+                            <text x={`${rowIndex * cellWidth + cellWidth / 2}px`} y={`${cellHeight / 2}px`}
+                                  textAnchor="middle"
+                                  alignmentBaseline="middle"
+                                  fill="white">{point.value}</text>
+                        </Fragment>
+                    })}
+                </g>
+            })
+        }
+    </>
 
 }
 
