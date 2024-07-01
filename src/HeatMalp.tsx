@@ -11,7 +11,7 @@ type HeatMapServiceState = {
 
 const equalizeDimensions = (width, height) => {
     if (width > height) {
-        // width = height
+        width = height
     } else {
         height = width
     }
@@ -48,7 +48,7 @@ class HeatMapService {
 
         this.cellHeight = height
         this.cellWidth = width
-        console.log(width,height,this.parentDimensions,this.yLabelWidth)
+
         this.emit()
     }
 
@@ -142,12 +142,12 @@ const Series = ({series, heatMapState}: { series: Series, heatMapState: HeatMapS
     return <>
         {
             series.map((item, columnIndex) => {
-                return <g transform={`translate(${yLabelWidth}, ${columnIndex * cellHeight})`} key={columnIndex}>
+                return <g transform={`translate(${yLabelWidth + cellWidth/2}, ${columnIndex * cellHeight})`} key={columnIndex}>
                     {item.points.map((point, rowIndex) => {
                         const width = `${cellWidth}px`
                         const height = `${cellHeight}px`
                         return <Fragment key={`${columnIndex}-${rowIndex}`}>
-                            <rect width={width} height={height} x={rowIndex * cellWidth} y={0} fill="black"
+                            <rect width={width} height={height}  x={rowIndex * cellWidth} y={0} fill="black"
                                   stroke="white"
                                   strokeWidth="1px"/>
                             <text x={`${rowIndex * cellWidth + cellWidth / 2}px`} y={`${cellHeight / 2}px`}
@@ -171,10 +171,10 @@ const YLabels = ({labels, registerGroup, heatMapState}: {
 }) => {
     const {yLabelWidth, cellWidth, cellHeight} = heatMapState
 
-    return <g ref={registerGroup}>
+    return <g ref={registerGroup} x={0}>
         {labels.map((label, index) => <text
             key={index}
-            x={`${yLabelWidth / 2 + cellWidth}px`}
+            x={`${yLabelWidth}px`}
             y={`${cellHeight * index + cellHeight / 2}px`}
             textAnchor="end"
             alignmentBaseline="middle"
